@@ -743,7 +743,7 @@ button {
 }
 
 .form-card {
-  background: white;
+  background: #cfd6ec;
   padding: 28px;
   border-radius: 22px;
   border: 1px solid var(--line);
@@ -958,18 +958,74 @@ button {
 
 
 
-/* Fix mobile room popup scrolling */
+/* Room details modal: reliable scrolling on desktop and mobile */
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+#roomModal {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  align-items: center;
+  justify-content: center;
+}
+
+#roomModal .modal {
+  width: min(100%, 620px);
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+#roomModal .modal > img[data-modal-image] {
+  width: 100%;
+  height: clamp(180px, 32vh, 250px);
+  object-fit: cover;
+}
+
+#roomModal .modal-content {
+  max-height: none;
+  overflow: visible;
+  padding: 24px;
+}
+
+#roomModal .modal-close {
+  position: sticky;
+  top: 8px;
+  float: right;
+  z-index: 5;
+  margin: 8px 8px -46px 0;
+}
+
 @media (max-width: 768px) {
-  .modal {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    align-items: flex-start;
+  #roomModal {
+    padding: 12px;
+    align-items: center;
   }
 
-  .modal-content {
-    max-height: calc(100dvh - 40px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+  #roomModal .modal {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 18px;
+  }
+
+  #roomModal .modal > img[data-modal-image] {
+    height: 30vh;
+    height: 30dvh;
+    min-height: 150px;
+    max-height: 230px;
+  }
+
+  #roomModal .modal-content {
+    padding: 20px;
   }
 }
 
@@ -1887,3 +1943,5 @@ button {
 .brand-mark {
     display: none;
 }
+
+
