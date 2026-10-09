@@ -955,6 +955,25 @@ button {
   background: #061a35
 }
 
+
+
+
+/* Fix mobile room popup scrolling */
+@media (max-width: 768px) {
+  .modal {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    align-items: flex-start;
+  }
+
+  .modal-content {
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+
 .lightbox-caption {
   padding: 12px 20px;
   display: flex;
@@ -1793,5 +1812,57 @@ button {
 
   .page-about .about-faq-item {
     padding: 15px
+  }
+}
+
+
+
+
+
+
+/* Fix hero buttons on small screens */
+@media (max-width: 480px) {
+  .hero .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero .hero-actions .btn {
+    flex: 1 1 140px;
+    min-width: 0;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+    border-radius: 30px;
+    text-align: center;
+  }
+}
+
+
+
+/* Mobile WhatsApp button: icon upar, text neeche */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 14px;
+    min-width: 78px;
+    min-height: 78px;
+    border-radius: 18px;
+  }
+
+  .whatsapp-mark {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .whatsapp-float i {
+    font-size: 27px;
   }
 }
