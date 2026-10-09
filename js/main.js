@@ -1,7 +1,7 @@
 
 /* Pari PG frontend interactions. Replace CONFIG values with verified contact details. */
 const CONFIG = {
-  whatsappNumber: "", // Add country code + number only, e.g. 91XXXXXXXXXX
+  whatsappNumber: "919953598137", // Add country code + number only, e.g. 91XXXXXXXXXX
   phoneDisplay: "Add your phone number",
   email: "Add your email address",
   address: "Pari PG, B-132, Beta 1, near Jagat Farm, Greater Noida, Uttar Pradesh, India"
@@ -40,8 +40,65 @@ if(inquiryForm){
   const chosen=sessionStorage.getItem("pariPgSelectedRoom");
   if(chosen&&roomSelect){const match=[...roomSelect.options].find(o=>o.text.toLowerCase().includes(chosen.toLowerCase().replace(" room","")));if(match)roomSelect.value=match.value;sessionStorage.removeItem("pariPgSelectedRoom");}
   const notice=inquiryForm.querySelector(".notice");
-  inquiryForm.querySelector("[data-submit-demo]")?.addEventListener("click",e=>{e.preventDefault();if(!inquiryForm.reportValidity())return;const data=Object.fromEntries(new FormData(inquiryForm).entries());sessionStorage.setItem("pariPgDemoInquiry",JSON.stringify(data));notice.style.display="block";notice.textContent="Demo only: your details are available in this browser session, but have NOT been sent or saved to a server. Connect a backend to receive inquiries.";});
-  inquiryForm.querySelector("[data-send-whatsapp]")?.addEventListener("click",e=>{e.preventDefault();if(!inquiryForm.reportValidity())return;if(!CONFIG.whatsappNumber){notice.style.display="block";notice.textContent="WhatsApp is not configured yet. Add the real WhatsApp number in js/main.js before using this button.";return;}const d=Object.fromEntries(new FormData(inquiryForm).entries());const message=`Pari PG inquiry\\nName: ${d.name}\\nPhone: ${d.phone}\\nEmail: ${d.email||"Not provided"}\\nRoom: ${d.roomType}\\nMove-in: ${d.moveDate||"Not specified"}\\nOccupants: ${d.occupants||"Not specified"}\\nMessage: ${d.message||"No message"}`;window.open(`https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`,"_blank","noopener");});
+  
+inquiryForm.querySelector("[data-submit-demo]")?.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  if (!inquiryForm.reportValidity()) return;
+
+  const notice = inquiryForm.parentElement.querySelector(".notice");
+  const data = Object.fromEntries(new FormData(inquiryForm).entries());
+
+  try {
+    const response = await fetch("https://formspree.io/f/mzznvvlj", {
+      method: "POST",
+      body: new FormData(inquiryForm),
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (response.ok) {
+      notice.style.display = "block";
+      notice.textContent = "Thank you! Your inquiry has been submitted successfully.";
+      inquiryForm.reset();
+   
+} else {
+  const result = await response.json().catch(() => ({}));
+
+  console.error("Formspree error:", result);
+
+  notice.style.display = "block";
+  notice.textContent =
+    result.errors?.map(error => error.message).join(", ") ||
+    `Submission failed. Error code: ${response.status}`;
+}
+
+  } catch (error) {
+    notice.style.display = "block";
+    notice.textContent = "Network error. Please check your internet and try again.";
+  }
+});
+
+  inquiryForm.querySelector("[data-send-whatsapp]")?.addEventListener("click",e=>{e.preventDefault();if(!inquiryForm.reportValidity())return;if(!CONFIG.whatsappNumber){notice.style.display="block";notice.textContent="WhatsApp is not configured yet. Add the real WhatsApp number in js/main.js before using this button.";return;}const d=Object.fromEntries(new FormData(inquiryForm).entries());
+  
+const message =
+    `Pari PG Inquiry\n\n` +
+    `Name: ${d.name}\n` +
+    `Phone: ${d.phone}\n` +
+    `Email: ${d.email || "Not provided"}\n` +
+    `Room: ${d.roomType}\n` +
+    `Move-in: ${d.moveDate || "Not specified"}\n` +
+    `Occupants: ${d.occupants || "Not specified"}\n` +
+    `Message: ${d.message || "No message"}`;
+
+window.open(
+    `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(message)}`,
+    "_blank",
+    "noopener"
+);
+});
+
 }
 const backTop=document.querySelector(".back-top");if(backTop){window.addEventListener("scroll",()=>backTop.classList.toggle("show",window.scrollY>450));backTop.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));}
 
