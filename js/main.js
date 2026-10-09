@@ -24,15 +24,89 @@ document.querySelectorAll("[data-room-filter]").forEach(btn=>btn.addEventListene
 
 document.querySelectorAll("[data-gallery-filter]").forEach(btn=>btn.addEventListener("click",()=>{const filter=btn.dataset.galleryFilter;document.querySelectorAll("[data-gallery-filter]").forEach(b=>b.classList.toggle("active",b===btn));document.querySelectorAll("[data-gallery-category]").forEach(card=>{card.hidden=filter!=="all" && card.dataset.galleryCategory!==filter;});}));
 
-const modalBackdrop=document.querySelector("#roomModal");
-if(modalBackdrop){document.querySelectorAll("[data-room-details]").forEach(btn=>btn.addEventListener("click",()=>{const card=btn.closest("[data-room-card]");const title=card?.querySelector("h3")?.textContent||btn.dataset.roomDetails;const price=card?.querySelector(".price")?.textContent||"";const img=card?.querySelector("img")?.src||"";modalBackdrop.querySelector("[data-modal-title]").textContent=title;modalBackdrop.querySelector("[data-modal-price]").textContent=price;modalBackdrop.querySelector("[data-modal-image]").src=img;modalBackdrop.querySelector("[data-modal-image]").alt=title;modalBackdrop.querySelector("[data-modal-description]").textContent="Room details are demo content. Please confirm availability, facilities and final price with Pari PG management.";modalBackdrop.classList.add("show");modalBackdrop.setAttribute("aria-hidden","false");modalBackdrop.querySelector("[data-modal-book]").dataset.selectedRoom=title;}));modalBackdrop.querySelectorAll("[data-modal-close]").forEach(b=>b.addEventListener("click",()=>modalBackdrop.classList.remove("show")));modalBackdrop.addEventListener("click",e=>{if(e.target===modalBackdrop)modalBackdrop.classList.remove("show")});modalBackdrop.querySelector("[data-modal-book]")?.addEventListener("click",e=>{sessionStorage.setItem("pariPgSelectedRoom",e.currentTarget.dataset.selectedRoom||"");location.href="contact.html#contact-form"});}
+
+const modalBackdrop = document.querySelector("#roomModal");
+
+function openRoomDetailsModal() {
+  if (!modalBackdrop) return;
+
+  modalBackdrop.classList.add("show");
+  modalBackdrop.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+}
+
+function closeRoomDetailsModal() {
+  if (!modalBackdrop) return;
+
+  modalBackdrop.classList.remove("show");
+  modalBackdrop.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+}
+
+if (modalBackdrop) {
+  document.querySelectorAll("[data-room-details]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest("[data-room-card]");
+
+      const title =
+        card?.querySelector("h3")?.textContent ||
+        btn.dataset.roomDetails;
+
+      const price = card?.querySelector(".price")?.textContent || "";
+      const img = card?.querySelector("img")?.src || "";
+
+      modalBackdrop.querySelector("[data-modal-title]").textContent = title;
+      modalBackdrop.querySelector("[data-modal-price]").textContent = price;
+
+      const modalImage = modalBackdrop.querySelector("[data-modal-image]");
+      modalImage.src = img;
+      modalImage.alt = title;
+
+      modalBackdrop.querySelector("[data-modal-description]").textContent =
+        "Room details are demo content. Please confirm availability, facilities and final price with Pari PG management.";
+
+      modalBackdrop.querySelector("[data-modal-book]").dataset.selectedRoom =
+        title;
+
+      openRoomDetailsModal();
+    });
+  });
+
+  modalBackdrop.querySelectorAll("[data-modal-close]").forEach(button => {
+    button.addEventListener("click", closeRoomDetailsModal);
+  });
+
+  modalBackdrop.addEventListener("click", event => {
+    if (event.target === modalBackdrop) {
+      closeRoomDetailsModal();
+    }
+  });
+
+  modalBackdrop.querySelector("[data-modal-book]")?.addEventListener(
+    "click",
+    event => {
+      sessionStorage.setItem(
+        "pariPgSelectedRoom",
+        event.currentTarget.dataset.selectedRoom || ""
+      );
+
+      closeRoomDetailsModal();
+      location.href = "contact.html#contact-form";
+    }
+  );
+}
+
 
 const lightbox=document.querySelector("#lightbox");
 let lightboxItems=[],lightboxIndex=0;
 function showLightbox(index){if(!lightbox)return;lightboxItems=[...document.querySelectorAll("[data-lightbox]:not([hidden])")];lightboxIndex=(index+lightboxItems.length)%lightboxItems.length;const item=lightboxItems[lightboxIndex];const img=item.querySelector("img");lightbox.querySelector("img").src=img.src;lightbox.querySelector("img").alt=img.alt;lightbox.querySelector("[data-lightbox-caption]").textContent=item.dataset.caption||img.alt;lightbox.classList.add("show");}
 document.querySelectorAll("[data-lightbox]").forEach(item=>item.addEventListener("click",()=>{lightboxItems=[...document.querySelectorAll("[data-lightbox]:not([hidden])")];showLightbox(lightboxItems.indexOf(item));}));
 if(lightbox){lightbox.querySelectorAll("[data-lightbox-close]").forEach(b=>b.addEventListener("click",()=>lightbox.classList.remove("show")));lightbox.querySelector("[data-lightbox-prev]")?.addEventListener("click",()=>showLightbox(lightboxIndex-1));lightbox.querySelector("[data-lightbox-next]")?.addEventListener("click",()=>showLightbox(lightboxIndex+1));lightbox.addEventListener("click",e=>{if(e.target===lightbox)lightbox.classList.remove("show")});}
-document.addEventListener("keydown",e=>{if(e.key==="Escape"){lightbox?.classList.remove("show");modalBackdrop?.classList.remove("show")}if(lightbox?.classList.contains("show")&&e.key==="ArrowRight")showLightbox(lightboxIndex+1);if(lightbox?.classList.contains("show")&&e.key==="ArrowLeft")showLightbox(lightboxIndex-1);});
+document.addEventListener("keydown",e=>{if (e.key === "Escape") {
+  lightbox?.classList.remove("show");
+  closeRoomDetailsModal();
+}
+if(lightbox?.classList.contains("show")&&e.key==="ArrowRight")showLightbox(lightboxIndex+1);if(lightbox?.classList.contains("show")&&e.key==="ArrowLeft")showLightbox(lightboxIndex-1);});
 
 const inquiryForm=document.querySelector("#inquiryForm");
 if(inquiryForm){
