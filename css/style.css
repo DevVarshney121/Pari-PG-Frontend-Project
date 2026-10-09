@@ -1866,3 +1866,24 @@ button {
     font-size: 27px;
   }
 }
+
+.brand-logo {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.brand-logo {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+    background: transparent;
+}
+
+.brand-mark {
+    display: none;
+}
